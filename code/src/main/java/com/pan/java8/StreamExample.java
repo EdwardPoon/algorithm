@@ -65,7 +65,7 @@ public class StreamExample {
         List<Integer> collect1 = num.stream().map(n -> n * 2).collect(Collectors.toList());
         System.out.println(collect1); //[2, 4, 6, 8, 10]
 	}
-	
+	// reduce means transfer values from more to less( should be one most of time) through some calculations
 	private static void testReduce() {
 		//identity: The identity element is both the initial value of the reduction and the default result if there are no elements in the stream.
 		//In this example, the identity element is 0; 
