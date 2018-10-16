@@ -14,16 +14,24 @@ public class MinimumBribesSolution {
     	int switchTimes = 0;
        
         int index = 1;
+        int lastSwitch = 0;
         for (int i=0;i<q.length-1;i++) {
         	if (q[i]-index >2) {
         		switchTimes = -1;
         		break;
         	}else if (q[i]-index ==2) {
         		switchTimes = switchTimes +2;
+        		lastSwitch = 2;
         	}else if (q[i]-index ==1) {
         		switchTimes = switchTimes +1;
-        	}else if (q[i]>q[i+1]) {
-        		switchTimes = switchTimes +1;
+        		lastSwitch = 1;
+        	}else if (q[i]-index ==0) {
+        		if (lastSwitch==2) {
+	        		switchTimes = switchTimes +1;
+	        		lastSwitch = 1;
+        		}
+        	}else {
+        		lastSwitch = 0;
         	}
         	System.out.println("index:"+index +",switchTimes:"+switchTimes);
         	index++;
