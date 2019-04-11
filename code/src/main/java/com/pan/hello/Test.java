@@ -11,7 +11,7 @@ public class Test {
 
 	public static void main(String[] args) throws Exception{
 		
-		
+		//ss
 		
 		BigDecimal numerator = BigDecimal.valueOf(170);
 		BigDecimal denominator = BigDecimal.valueOf(30);
