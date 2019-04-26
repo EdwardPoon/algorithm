@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<!-- 
 	<packaging>jar</packaging>
- -->
+ 	-->
 	<name>springboot</name>
 	<description>Demo project for Spring Boot</description>
 
@@ -55,6 +55,18 @@
 			<scope>test</scope>
 		</dependency>
 		 -->
+		<dependency>
+		  <groupId>net.openhft</groupId>
+		  <artifactId>chronicle-queue</artifactId>
+		  <version>5.17.12</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.4.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -63,7 +75,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
