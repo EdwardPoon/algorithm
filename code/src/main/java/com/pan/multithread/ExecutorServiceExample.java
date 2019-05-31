@@ -10,8 +10,6 @@ public class ExecutorServiceExample {
 
 	public static void main(String[] args) throws Exception {
 		testRunable();
-		
-		
 	}
 	private static void testRunable() {
 		ExecutorService executorService = Executors.newFixedThreadPool(10);

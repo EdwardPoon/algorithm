@@ -6,6 +6,7 @@ public class HelloWorldExample {
 	
 	
 	public static void hello(String... names) {
+		/**
 	    Observable.fromArray(names).subscribe(new Action1<String>() {
 
 	        @Override
@@ -14,6 +15,7 @@ public class HelloWorldExample {
 	        }
 
 	    });
+	    */
 	}
 
 }

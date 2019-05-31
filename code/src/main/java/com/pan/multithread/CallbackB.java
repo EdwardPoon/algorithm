@@ -45,7 +45,7 @@ public class CallbackB {
 
             }));
 
-            // get f4/f5 after dependency f2 completes 
+            // get f4/f5 after dependency f2 completes
             executor.execute(new CallToRemoteServiceB(new Callback<Integer>() {
 
                 @Override
