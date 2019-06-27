@@ -70,7 +70,6 @@ public class BubbleSort {
     				
     				swapPos = i;
     			}
-    			
     		}
     		endPos = swapPos;
     	}

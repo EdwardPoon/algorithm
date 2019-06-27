@@ -8,8 +8,6 @@ public class MinimumBribesSolution {
 	/**
 	 * @param q
 	 */
-
-	
     static int minimumBribes(int[] q) {
     	int switchTimes = 0;
        
@@ -58,15 +56,11 @@ public class MinimumBribesSolution {
         for (int i=0;i<array.length;i++){
         	q[i] = Integer.valueOf( array[i]);
         }
-    	
-        
         int switchTimes = minimumBribes(q);
         if (switchTimes==-1){
             System.out.println("Too chaotic");
         }else{
         	System.out.println(switchTimes);
         }
-        
-        
     }
 }
