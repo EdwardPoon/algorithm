@@ -193,8 +193,8 @@ public class ProductionNoticeServiceImp implements ProductionNoticeService {
             for (Iterator<BomInfo> iterator2 = bomlist.iterator(); iterator2.hasNext();) {
                 BomInfo bomInfo = iterator2.next();
                 submaterialCode = bomInfo.getSubmaterialcode();
-                String retStr = genSubMaterial(ordernumber,bomInfo,salesOrderDetail,salesOrderDetail.getQuantity(),
-                        wujinMap,packageMap, semiProdMap,resorceMap,resorceColorMap,setupMap);
+                String retStr = genSubMaterial(ordernumber,bomInfo,salesOrderDetail.getMaterialcode(),salesOrderDetail.getColorcode(),salesOrderDetail.getDeliverdate(),
+                		salesOrderDetail.getQuantity(),wujinMap,packageMap, semiProdMap,resorceMap,resorceColorMap,setupMap);
                 strRes.append(retStr);
             }
             //成品生产通知单
@@ -445,7 +445,7 @@ public class ProductionNoticeServiceImp implements ProductionNoticeService {
     //semiProdMap 半成品map
     // resorceMap 原料数量map,不含颜色
     // resorceColorMap原料数量map,含颜色
-    private String genSubMaterial(String ordernumber,BomInfo bomInfo,SalesOrderDetail salesOrderDetail,BigDecimal inputCount,
+    private String genSubMaterial(String ordernumber,BomInfo bomInfo,String materialCode,String colorCode,Date deliverdate,BigDecimal inputCount,
             Map<String,BigDecimal> wujinMap,Map<String,BigDecimal> packageMap,Map<String,ProductionNoticeDetail> semiProdMap,
             Map<String,BigDecimal> resorceMap,Map<String,BigDecimal> resorceColorMap,Map<String,BigDecimal> setupMap){
         StringBuilder strRes = new StringBuilder("");
@@ -453,6 +453,10 @@ public class ProductionNoticeServiceImp implements ProductionNoticeService {
         String noticeTypeCodeProdSemi = "semiprod";
         String noticeCodeProdSemi = ordernumber+"_"+noticeTypeCodeProdSemi;
         String submaterialCode = bomInfo.getSubmaterialcode();
+        String bomExtMapKey = materialCode
+        		+ "-" + colorCode
+        		+ "-" + submaterialCode;
+        System.out.println("bomExtMapKey:" + bomExtMapKey);
         
         List<MaterialInfo> materialList =utilsDao.find("from MaterialInfo where materialcode=?",submaterialCode);
         //System.out.println("子物料:"+materialCode);
@@ -466,142 +470,155 @@ public class ProductionNoticeServiceImp implements ProductionNoticeService {
                     bomInfo.getSubmaterialquantity());
 
             if(subMat.getMaterialtype().equals("成品") && subMat.getIsneedsetup().equals("是")){
+            	String subMatColorCode = null;
+                if (bomInfoExt.get(bomExtMapKey)!=null){
+                	subMatColorCode = bomInfoExt.get(bomExtMapKey);
+                }else{
+                	subMatColorCode = colorCode;
+                }
+                System.out.println("成品，setup，materialCode:" + subMat.getMaterialcode() + ",subMatColorCode:" + subMatColorCode);
                 //如果需要安装，保存安装通知单(因为某些成品又由一些需安装的成品组成)
-                String key = subMat.getMaterialcode() +"---===" + salesOrderDetail.getColorcode();
+                String key = subMat.getMaterialcode() +"---===" + subMatColorCode;
                 if (setupMap.get(key.toString())!=null){
                     setupMap.put(key.toString(), setupMap.get(key.toString()).add(quantity));
                 }else{
                     setupMap.put(key.toString(), quantity);
                 }
+
                 //如果需安装，并且是成品，需要再次递归
                 List<BomInfo> bomlist =utilsDao.find("from BomInfo where parentmaterialcode=?",subMat.getMaterialcode());
                 for (Iterator<BomInfo> iterator = bomlist.iterator(); iterator.hasNext();) {
                     BomInfo bomInfo2 = iterator.next();
-                    strRes.append(genSubMaterial(ordernumber, bomInfo2, salesOrderDetail, inputCount.multiply(bomInfo.getSubmaterialquantity()),
+                    
+                    strRes.append(genSubMaterial(ordernumber, bomInfo2, bomInfo2.getParentmaterialcode(),subMatColorCode,deliverdate,inputCount.multiply(bomInfo.getSubmaterialquantity()),
                             wujinMap,packageMap, semiProdMap, resorceMap, resorceColorMap,setupMap));
                 }
                 return strRes.toString();
-            }
-            //查询对应的原料
-            List<BomInfo> bomResList =utilsDao.find("from BomInfo where parentmaterialcode=?",submaterialCode);
-            
-            if (bomResList.size()<=0){
-                //System.out.println("2=="+ submaterialCode);
-                strRes.append(submaterialCode).append(";");
             }else{
-                //因为每只产品，或半成品只有一种原料
-                BomInfo bomResInfo = bomResList.get(0);
-                String materialResCode = bomResInfo.getSubmaterialcode();
-                //System.out.println("原料:"+materialResCode);
-                //如果是原料，保存原料领料通知单
-                if(bomResInfo.getMaterialtype().equals("原料")){
-                    //通过模具计算需要多少原料
-                    //需生产件数 = 订单件数 * bom的半成品数量
-                    rawMatQty = calculateRawQuantity(
-                            inputCount.multiply(bomInfo.getSubmaterialquantity()),
-                            submaterialCode);
-                    if(rawMatQty!=null){
-                        String key =  materialResCode;
-                        if (resorceMap.get(key)!=null){
-                            resorceMap.put(key, resorceMap.get(key).add(rawMatQty.getMaterialWeight()));
-                        }else{
-                            resorceMap.put(key, rawMatQty.getMaterialWeight());
-                        }
-                        if (subMat.getMaterialdesc().equals(InventoryConstant.MaterialDesc_NoColor)){
-                            key =materialResCode + "---===";
-                        }else{
-                            key =materialResCode + "---==="+ salesOrderDetail.getColorcode();
-                        }
-                        if (resorceColorMap.get(key)!=null){
-                            resorceColorMap.put(key, resorceColorMap.get(key).add(rawMatQty.getMaterialWeight()));
-                        }else{
-                            resorceColorMap.put(key, rawMatQty.getMaterialWeight());
-                        }
-                    }
-                }
-                //半成品生产通知单
-                String key2 = "";
-                String semicolorcode = "";
-                if (subMat.getMaterialdesc().equals(InventoryConstant.MaterialDesc_NoColor)){
-                    key2 = submaterialCode+"___";
-                }else{
-                    key2 = submaterialCode+"___"+salesOrderDetail.getColorcode();
-                    semicolorcode = salesOrderDetail.getColorcode();
-                    String bomExtMapKey = salesOrderDetail.getMaterialcode()
-                    		+ "-" + salesOrderDetail.getColorcode()
-                    		+ "-" + submaterialCode;
-                    if (bomInfoExt.get(bomExtMapKey)!=null){
-                    	semicolorcode = bomInfoExt.get(bomExtMapKey);
-                    }
-                }
-                if (semiProdMap.get(key2)==null){
-                    ProductionNoticeDetail noticeDetailProd = new ProductionNoticeDetail();
-                    noticeDetailProd.setColorcode(semicolorcode);
-                    noticeDetailProd.setMaterialcode(submaterialCode);
-                    noticeDetailProd.setProductionnoticecode(noticeCodeProdSemi);
-                    noticeDetailProd.setOrdernumber(ordernumber);
-                    noticeDetailProd.setProductionNoticeTypeCode(noticeTypeCodeProdSemi);
-                    noticeDetailProd.setQuantity(quantity);
-                    noticeDetailProd.setUnitcode(bomInfo.getSubmaterialunit());
-                    noticeDetailProd.setUnitprice(subMat.getUnitprice());
-                    if (rawMatQty==null){
-                        System.out.println("rawMatQty is null,materialCode: "+submaterialCode);
-                    }
-                    noticeDetailProd.setDeliverdate(salesOrderDetail.getDeliverdate());
-                    if (subMat.getIsneedsetup().equals("不需生产")){
-                        noticeDetailProd.setIsNeedGenerate(0);
-                    }else{
-                        noticeDetailProd.setIsNeedGenerate(1);
-                    }
-                    
-                    /*noticeDetailProd.setProdgroupcount(rawMatQty.getProdgroupcount());
-                    noticeDetailProd.setNozzleweight(rawMatQty.getNozzleWeight());
-                    noticeDetailProd.setTotalweight(rawMatQty.getMaterialWeight());
-                    noticeDetailProd.setProdweight(subMat.getUnitweight()==null?BigDecimal.ZERO
-                            :subMat.getUnitweight().multiply(noticeDetailProd.getQuantity()).divide(BigDecimal.valueOf(1000)));
-                    noticeDetailProd.setRawmatcode(bomResInfo.getSubmaterialcode());*/
-                    ProductionNoticeDetailRaw noticeDetailProdRaw = new ProductionNoticeDetailRaw();
-                    noticeDetailProdRaw.setNozzleweight(rawMatQty.getNozzleWeight());
-                    noticeDetailProdRaw.setProdgroupcount(rawMatQty.getProdgroupcount());
-                    noticeDetailProdRaw.setTotalweight(rawMatQty.getMaterialWeight());
-                    BigDecimal prodWeight = subMat.getUnitweight()==null?BigDecimal.ZERO
-                            :subMat.getUnitweight().multiply(noticeDetailProd.getQuantity()).divide(BigDecimal.valueOf(1000));
-                    noticeDetailProdRaw.setProdweight(prodWeight);
-                    noticeDetailProdRaw.setRawmatcode(bomResInfo.getSubmaterialcode());
-                    noticeDetailProdRaw.setMaterialcode(submaterialCode);
-                    noticeDetailProdRaw.setColorcode(semicolorcode);
-                    //noticeDetailProdRaw.setProductiondetailid(productiondetailid);
-                    noticeDetailProd.addProductionNoticeDetailRaw(noticeDetailProdRaw);
-                    //productionNoticeDetailMapper.insertSelective(noticeDetailProd);
-                    //utilsDao.insert(noticeDetailProd);
-                    //updateProductNoticeQty(noticeDetailProd);
-                    
-                    semiProdMap.put(key2, noticeDetailProd);
-                }else{
-                    ProductionNoticeDetail noticeDetailProd = semiProdMap.get(key2);
-                    noticeDetailProd.setQuantity(noticeDetailProd.getQuantity().add(quantity));
-                    ProductionNoticeDetailRaw noticeDetailProdRaw = noticeDetailProd.getProductionNoticeDetailRaws().get(0);
-                    noticeDetailProdRaw.setNozzleweight(noticeDetailProdRaw.getNozzleweight().add(rawMatQty.getNozzleWeight()));
-                    noticeDetailProdRaw.setTotalweight(noticeDetailProdRaw.getTotalweight().add(rawMatQty.getMaterialWeight()));
-                    BigDecimal prodWeight = subMat.getUnitweight()==null?BigDecimal.ZERO
-                            :subMat.getUnitweight().multiply(noticeDetailProd.getQuantity()).divide(BigDecimal.valueOf(1000));
-                    noticeDetailProdRaw.setProdweight(prodWeight.add(noticeDetailProdRaw.getProdweight()));
-                    noticeDetailProdRaw.setProdgroupcount(noticeDetailProdRaw.getProdgroupcount().add(rawMatQty.getProdgroupcount()));
-                    /*
-                    Map<String,Object> params = new HashMap<String,Object>();
-                    params.put("quantity", noticeDetailProd.getQuantity());
-                    noticeDetailProd.setNozzleweight( noticeDetailProd.getNozzleweight().add(rawMatQty.getNozzleWeight()));
-                    params.put("nozzleweight", noticeDetailProd.getNozzleweight());
-                    noticeDetailProd.setTotalweight( noticeDetailProd.getTotalweight().add(rawMatQty.getMaterialWeight()));
-                    params.put("totalweight", noticeDetailProd.getTotalweight());
-                    params.put("colorcode", semicolorcode);
-                    params.put("materialcode", submaterialCode);
-                    params.put("productionnoticecode", noticeCodeProdSemi);
-                    utilsDao.execute("update ProductionNoticeDetail set quantity=:quantity,nozzleweight=:nozzleweight,totalweight=:totalweight "
-                            + " where colorcode=:colorcode and materialcode=:materialcode and productionnoticecode=:productionnoticecode", 
-                            params);*/
-                    semiProdMap.put(key2, noticeDetailProd);
-                }
+            	System.out.println("半成品或成品，nosetup，materialCode:" + subMat.getMaterialcode() + ",submaterialCode:" + submaterialCode);
+	            //半成品，查询对应的原料
+	            List<BomInfo> bomResList =utilsDao.find("from BomInfo where parentmaterialcode=?",submaterialCode);
+	            
+	            if (bomResList.size()<=0){
+	                //System.out.println("2=="+ submaterialCode);
+	                strRes.append(submaterialCode).append(";");
+	            }else{
+	                //因为每只产品，或半成品只有一种原料
+	                BomInfo bomResInfo = bomResList.get(0);
+	                String materialResCode = bomResInfo.getSubmaterialcode();
+	                //System.out.println("原料:"+materialResCode);
+	                //如果是原料，保存原料领料通知单
+	                if(bomResInfo.getMaterialtype().equals("原料")){
+	                    //通过模具计算需要多少原料
+	                    //需生产件数 = 订单件数 * bom的半成品数量
+	                    rawMatQty = calculateRawQuantity(
+	                            inputCount.multiply(bomInfo.getSubmaterialquantity()),
+	                            submaterialCode);
+	                    if(rawMatQty!=null){
+	                        String key =  materialResCode;
+	                        if (resorceMap.get(key)!=null){
+	                            resorceMap.put(key, resorceMap.get(key).add(rawMatQty.getMaterialWeight()));
+	                        }else{
+	                            resorceMap.put(key, rawMatQty.getMaterialWeight());
+	                        }
+	                        if (subMat.getMaterialdesc().equals(InventoryConstant.MaterialDesc_NoColor)){
+	                            key =materialResCode + "---===";
+	                        }else{
+	                        	String semicolorcode = colorCode;
+	                        	if (bomInfoExt.get(bomExtMapKey)!=null){
+	                            	semicolorcode = bomInfoExt.get(bomExtMapKey);
+	                            }
+	                            key =materialResCode + "---===" + semicolorcode;
+	                        }
+	                        if (resorceColorMap.get(key)!=null){
+	                            resorceColorMap.put(key, resorceColorMap.get(key).add(rawMatQty.getMaterialWeight()));
+	                        }else{
+	                            resorceColorMap.put(key, rawMatQty.getMaterialWeight());
+	                        }
+	                    }
+	                }
+	                //半成品生产通知单
+	                String key2 = "";
+	                String semicolorcode = "";
+	                if (subMat.getMaterialdesc().equals(InventoryConstant.MaterialDesc_NoColor)){
+	                    key2 = submaterialCode+"___";
+	                }else{
+	                    key2 = submaterialCode+"___"+colorCode;
+	                    semicolorcode = colorCode;
+	                    
+	                    if (bomInfoExt.get(bomExtMapKey)!=null){
+	                    	semicolorcode = bomInfoExt.get(bomExtMapKey);
+	                    }
+	                }
+	                if (semiProdMap.get(key2)==null){
+	                    ProductionNoticeDetail noticeDetailProd = new ProductionNoticeDetail();
+	                    noticeDetailProd.setColorcode(semicolorcode);
+	                    noticeDetailProd.setMaterialcode(submaterialCode);
+	                    noticeDetailProd.setProductionnoticecode(noticeCodeProdSemi);
+	                    noticeDetailProd.setOrdernumber(ordernumber);
+	                    noticeDetailProd.setProductionNoticeTypeCode(noticeTypeCodeProdSemi);
+	                    noticeDetailProd.setQuantity(quantity);
+	                    noticeDetailProd.setUnitcode(bomInfo.getSubmaterialunit());
+	                    noticeDetailProd.setUnitprice(subMat.getUnitprice());
+	                    if (rawMatQty==null){
+	                        System.out.println("rawMatQty is null,materialCode: "+submaterialCode);
+	                    }
+	                    noticeDetailProd.setDeliverdate(deliverdate);
+	                    if (subMat.getIsneedsetup().equals("不需生产")){
+	                        noticeDetailProd.setIsNeedGenerate(0);
+	                    }else{
+	                        noticeDetailProd.setIsNeedGenerate(1);
+	                    }
+	                    
+	                    /*noticeDetailProd.setProdgroupcount(rawMatQty.getProdgroupcount());
+	                    noticeDetailProd.setNozzleweight(rawMatQty.getNozzleWeight());
+	                    noticeDetailProd.setTotalweight(rawMatQty.getMaterialWeight());
+	                    noticeDetailProd.setProdweight(subMat.getUnitweight()==null?BigDecimal.ZERO
+	                            :subMat.getUnitweight().multiply(noticeDetailProd.getQuantity()).divide(BigDecimal.valueOf(1000)));
+	                    noticeDetailProd.setRawmatcode(bomResInfo.getSubmaterialcode());*/
+	                    ProductionNoticeDetailRaw noticeDetailProdRaw = new ProductionNoticeDetailRaw();
+	                    noticeDetailProdRaw.setNozzleweight(rawMatQty.getNozzleWeight());
+	                    noticeDetailProdRaw.setProdgroupcount(rawMatQty.getProdgroupcount());
+	                    noticeDetailProdRaw.setTotalweight(rawMatQty.getMaterialWeight());
+	                    BigDecimal prodWeight = subMat.getUnitweight()==null?BigDecimal.ZERO
+	                            :subMat.getUnitweight().multiply(noticeDetailProd.getQuantity()).divide(BigDecimal.valueOf(1000));
+	                    noticeDetailProdRaw.setProdweight(prodWeight);
+	                    noticeDetailProdRaw.setRawmatcode(bomResInfo.getSubmaterialcode());
+	                    noticeDetailProdRaw.setMaterialcode(submaterialCode);
+	                    noticeDetailProdRaw.setColorcode(semicolorcode);
+	                    //noticeDetailProdRaw.setProductiondetailid(productiondetailid);
+	                    noticeDetailProd.addProductionNoticeDetailRaw(noticeDetailProdRaw);
+	                    //productionNoticeDetailMapper.insertSelective(noticeDetailProd);
+	                    //utilsDao.insert(noticeDetailProd);
+	                    //updateProductNoticeQty(noticeDetailProd);
+	                    
+	                    semiProdMap.put(key2, noticeDetailProd);
+	                }else{
+	                    ProductionNoticeDetail noticeDetailProd = semiProdMap.get(key2);
+	                    noticeDetailProd.setQuantity(noticeDetailProd.getQuantity().add(quantity));
+	                    ProductionNoticeDetailRaw noticeDetailProdRaw = noticeDetailProd.getProductionNoticeDetailRaws().get(0);
+	                    noticeDetailProdRaw.setNozzleweight(noticeDetailProdRaw.getNozzleweight().add(rawMatQty.getNozzleWeight()));
+	                    noticeDetailProdRaw.setTotalweight(noticeDetailProdRaw.getTotalweight().add(rawMatQty.getMaterialWeight()));
+	                    BigDecimal prodWeight = subMat.getUnitweight()==null?BigDecimal.ZERO
+	                            :subMat.getUnitweight().multiply(noticeDetailProd.getQuantity()).divide(BigDecimal.valueOf(1000));
+	                    noticeDetailProdRaw.setProdweight(prodWeight.add(noticeDetailProdRaw.getProdweight()));
+	                    noticeDetailProdRaw.setProdgroupcount(noticeDetailProdRaw.getProdgroupcount().add(rawMatQty.getProdgroupcount()));
+	                    /*
+	                    Map<String,Object> params = new HashMap<String,Object>();
+	                    params.put("quantity", noticeDetailProd.getQuantity());
+	                    noticeDetailProd.setNozzleweight( noticeDetailProd.getNozzleweight().add(rawMatQty.getNozzleWeight()));
+	                    params.put("nozzleweight", noticeDetailProd.getNozzleweight());
+	                    noticeDetailProd.setTotalweight( noticeDetailProd.getTotalweight().add(rawMatQty.getMaterialWeight()));
+	                    params.put("totalweight", noticeDetailProd.getTotalweight());
+	                    params.put("colorcode", semicolorcode);
+	                    params.put("materialcode", submaterialCode);
+	                    params.put("productionnoticecode", noticeCodeProdSemi);
+	                    utilsDao.execute("update ProductionNoticeDetail set quantity=:quantity,nozzleweight=:nozzleweight,totalweight=:totalweight "
+	                            + " where colorcode=:colorcode and materialcode=:materialcode and productionnoticecode=:productionnoticecode", 
+	                            params);*/
+	                    semiProdMap.put(key2, noticeDetailProd);
+	                }
+	            }
             }
         }
         //如果是五金件，保存领用通知单
@@ -632,8 +649,7 @@ public class ProductionNoticeServiceImp implements ProductionNoticeService {
         else if(subMat.getMaterialtype().equals("原料")){
             //通过模具计算需要多少原料
             //需生产件数 = 订单件数 
-            rawMatQty = calculateRawQuantity(
-                    inputCount, salesOrderDetail.getMaterialcode());
+            rawMatQty = calculateRawQuantity(inputCount, materialCode);
             
             if(rawMatQty!=null){
                 String key = submaterialCode;
@@ -642,7 +658,7 @@ public class ProductionNoticeServiceImp implements ProductionNoticeService {
                 }else{
                     resorceMap.put(key.toString(), rawMatQty.getMaterialWeight());
                 }
-                key = submaterialCode + "---==="+ salesOrderDetail.getColorcode();
+                key = submaterialCode + "---==="+ colorCode;
                 if (resorceColorMap.get(key.toString())!=null){
                     resorceColorMap.put(key.toString(), resorceColorMap.get(key.toString()).add(rawMatQty.getMaterialWeight()));
                 }else{
