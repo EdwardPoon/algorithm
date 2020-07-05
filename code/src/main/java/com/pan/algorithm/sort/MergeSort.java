@@ -1,6 +1,6 @@
-package com.pan.algorithm;
+package com.pan.algorithm.sort;
 
-public class MergeSort extends Sort{
+public class MergeSort extends Sort {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

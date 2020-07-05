@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.sort;
 
 public class Sort {
 	

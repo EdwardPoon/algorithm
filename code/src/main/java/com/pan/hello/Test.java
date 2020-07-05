@@ -10,7 +10,7 @@ public class Test {
 	private static final String str = "";
 
 	public static void main(String[] args) throws Exception{
-		
+
 		//ss
 		
 		BigDecimal numerator = BigDecimal.valueOf(170);

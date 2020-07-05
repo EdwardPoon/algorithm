@@ -36,6 +36,7 @@ public class MinimumSwapsArray {
 
         int res = minimumSwaps(arr);
 
+
         bufferedWriter.write(String.valueOf(res));
         bufferedWriter.newLine();
 

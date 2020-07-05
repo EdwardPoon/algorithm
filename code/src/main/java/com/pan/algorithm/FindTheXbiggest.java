@@ -3,6 +3,8 @@ package com.pan.algorithm;
 //Find the x biggest number in the array
 //In array 4， 2， 5， 12， 3, the 3rd biggest number is 4. how to implement it with time complexity O(n)
 
+import com.pan.algorithm.sort.Sort;
+
 public class FindTheXbiggest {
 
 	public static void main(String[] args) {
