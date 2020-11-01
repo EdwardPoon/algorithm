@@ -1,4 +1,4 @@
-package com.pan.algorithm.dynamic;
+package com.pan.algorithm.dynamicprogramming;
 
 public class Abbreviation {
 
