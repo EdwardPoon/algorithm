@@ -27,9 +27,9 @@ public class PDFBoxTest {
     private static String path_compressed = "D:\\Mine\\tungtungPrimary\\nurserydoc\\compressed\\";
     public static void main(String[] args) throws FileNotFoundException, IOException {
         merge();
-        //String filename = "prize";
-        //List<PDImageXObject> images = extractImages(filename);
-        //writePdf(filename + "_compres", images);
+        String filename = "prize";
+        List<PDImageXObject> images = extractImages(filename);
+        writePdf(filename + "_compres", images);
     }
 
     private static List<PDImageXObject> extractImages(String fileName) throws FileNotFoundException, IOException {

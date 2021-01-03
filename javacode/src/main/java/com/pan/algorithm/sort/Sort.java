@@ -9,11 +9,9 @@ public class Sort {
 		arr[2] = 5;
 		arr[3] = 4;
 		arr[4] = 3;
-		
-		selectionSort(arr);
+
+		insertSort(arr);
 		show(arr);
-		double l = 14 % 3;
-		System.out.print(l);
 		
 	}
 	public static void selectionSort(Comparable[] a) { // Sort a[] into increasing order.

@@ -6,6 +6,9 @@ import java.util.LinkedHashSet;
 public class Test {
 
     public static int minimum_index(int[] seq) {
+
+        //System.arraycopy()
+
         if (seq.length == 0) {
             throw new IllegalArgumentException("Cannot get the minimum value index from an empty sequence");
         }
