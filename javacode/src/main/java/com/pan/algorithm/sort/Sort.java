@@ -68,6 +68,13 @@ public class Sort {
 		System.out.println();
 	}
 
+	public static void show(int[] a) { // Print the array, on a single
+		// line.
+		for (int i = 0; i < a.length; i++)
+			System.out.print(a[i] + " ");
+		System.out.println();
+	}
+
 	public static boolean isSorted(Comparable[] a) { // Test whether the array
 														// entries are in order.
 		for (int i = 1; i < a.length; i++)

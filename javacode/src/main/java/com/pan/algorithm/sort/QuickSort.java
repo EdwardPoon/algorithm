@@ -5,7 +5,8 @@ public class QuickSort extends Sort {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Comparable<Integer>[] arr = new Integer[8];
+		// Comparable<Integer>[] arr = new Integer[8];
+		int[] arr = new int[8];
 		arr[0] = 6;
 		arr[1] = 1;
 		arr[2] = 5;
@@ -14,15 +15,13 @@ public class QuickSort extends Sort {
 		arr[5] = 3;
 		arr[6] = 2;
 		arr[7] = 8;
-		sort(arr);
+		//sort(arr, 0, arr.length - 1);
+		qsort(arr, 0, arr.length - 1);
+
 		show(arr);
 	}
 
-	public static void sort(Comparable[] a) {
-
-		sort(a, 0, a.length - 1);
-	}
-
+	// solution 1 with recursion
 	private static void sort(Comparable[] a, int lo, int hi) {
 		if (hi <= lo)
 			return;
@@ -54,4 +53,53 @@ public class QuickSort extends Sort {
 		exch(a, lo, j);
 		return j;// with a[lo..j-1] <= a[j] <= a[j+1..hi].
 	}
+
+	// solution 2 with recursion
+	static void qsort(int[] a, int lo, int hi) {
+
+		if (hi <= lo) {
+			return;
+		}
+		int pivotIndex = partition(a, lo, hi);
+		qsort(a, lo, pivotIndex - 1);
+		qsort(a, pivotIndex + 1, hi);
+	}
+
+	/* This function takes last element as pivot,
+    places the pivot element at its correct position in array,
+    and places all smaller (smaller than pivot) to left of pivot and all greater elements to rightS of pivot */
+	static int partition(int arr[], int low, int high)
+	{
+		System.out.println("partition, low=" + low + ", high=" + high);
+		int pivot = arr[high];
+		int i = low; // index of smaller element
+		for (int j = low; j <= high - 1; j++) {
+			// If current element is smaller than or
+			// equal to pivot
+			if (arr[j] <= pivot) {
+
+				if (i != j) {
+					// swap arr[i] and arr[j]
+					int temp = arr[i];
+					arr[i] = arr[j];
+					arr[j] = temp;
+				}
+
+				System.out.println("swap i="+i + ", j=" + j);
+				show(arr);
+				i++;
+			}
+		}
+
+		// swap arr[i+1] and arr[high] (or pivot)
+		int temp = arr[i];
+		arr[i] = arr[high];
+		arr[high] = temp;
+
+		System.out.println("swap i="+i + ", high=" + high);
+		show(arr);
+
+		return i;
+	}
+
 }

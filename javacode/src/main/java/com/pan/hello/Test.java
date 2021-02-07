@@ -11,6 +11,8 @@ public class Test {
 
 	public static void main(String[] args) throws Exception{
 
+
+		System.out.println(1010 % 1000);
 		//ss
 		
 		BigDecimal numerator = BigDecimal.valueOf(170);

@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.backtracking;
 
 public class BackTracking {
 
