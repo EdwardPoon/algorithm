@@ -91,7 +91,7 @@ public class QuickSort extends Sort {
 			}
 		}
 
-		// swap arr[i+1] and arr[high] (or pivot)
+		// swap arr[i+1] and arr[high] (pivot)
 		int temp = arr[i];
 		arr[i] = arr[high];
 		arr[high] = temp;
