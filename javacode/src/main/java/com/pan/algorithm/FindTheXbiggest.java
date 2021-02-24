@@ -15,7 +15,8 @@ public class FindTheXbiggest {
 		Comparable<Integer> res = findXBiggest(arr, x);
 		System.out.println("the " + x + " biggest is " +res);
 	}
-
+	// if find the x biggest(smallest) element by quick sort, the time complexity is n + n/2 + n/4 + n/8 ....
+	// so it equal to 2n-1, O(n)
 	private static Comparable findXBiggest(Comparable[] array, int x) {
 
 		int start = 0;
