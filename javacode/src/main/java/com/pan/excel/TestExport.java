@@ -31,7 +31,7 @@ public class TestExport {
             Label label = new Label(0, 0, "Test Count");
             excelSheet.addCell(label);
 
-            Number number = new Number(0, 1, 1);
+            Number number = new Number(0, 1, 20);
             excelSheet.addCell(number);
 
             label = new Label(1, 0, "Result");
@@ -40,14 +40,15 @@ public class TestExport {
             label = new Label(1, 1, "Passed");
             excelSheet.addCell(label);
 
-            number = new Number(0, 2, 2);
+            number = new Number(0, 2, 30);
             excelSheet.addCell(number);
 
             label = new Label(1, 2, "Passed 2");
             excelSheet.addCell(label);
 
+            Formula formula = new Formula(0, 3, "SUM(A2:A3)");
+            excelSheet.addCell(formula);
             myFirstWbook.write();
-
 
         } catch (IOException | WriteException e) {
             e.printStackTrace();
@@ -62,10 +63,6 @@ public class TestExport {
                     e.printStackTrace();
                 }
             }
-
-
         }
-
     }
-
 }
