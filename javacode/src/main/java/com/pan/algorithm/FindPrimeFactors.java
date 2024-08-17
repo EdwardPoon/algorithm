@@ -23,7 +23,7 @@ public class FindPrimeFactors {
 
         for (int i = 3; i <= Math.sqrt(number); i=i+2) {
             System.out.println("i="+i);
-            while  (number % i == 0) {
+            while (number % i == 0) {
                 factors.add(i);
 
                 number /= i;

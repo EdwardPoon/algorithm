@@ -19,17 +19,23 @@ import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PDFBoxTest {
 
     private static String path = "D:\\Mine\\tungtungPrimary\\nurserydoc\\";
     private static String path_compressed = "D:\\Mine\\tungtungPrimary\\nurserydoc\\compressed\\";
+
     public static void main(String[] args) throws FileNotFoundException, IOException {
-        merge();
-        String filename = "prize";
-        List<PDImageXObject> images = extractImages(filename);
-        writePdf(filename + "_compres", images);
+        //merge();
+        //String filename = "prize";
+        //List<PDImageXObject> images = extractImages(filename);
+        //writePdf(filename + "_compres", images);
+
+
+        extractPages("D:\\Handbook.pdf", "D:\\Handbook_temp.pdf", 2, 288);
     }
 
     private static List<PDImageXObject> extractImages(String fileName) throws FileNotFoundException, IOException {
@@ -42,7 +48,6 @@ public class PDFBoxTest {
             for (COSName c : pdResources.getXObjectNames()) {
                 PDXObject o = pdResources.getXObject(c);
                 if (o instanceof PDImageXObject) {
-
 
                         File file = new File(path_compressed + fileName + "_" + i + ".png");
                         PDImageXObject image = (PDImageXObject) o;
@@ -132,5 +137,26 @@ public class PDFBoxTest {
 
         ut.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
     }
-
+    // startPage: starts with 0
+    private static void extractPages(String file, String newFile, int startPage, int endPage) throws FileNotFoundException, IOException {
+        PDDocument document = PDDocument.load(new File(file));
+        PDDocument newDoc =  new PDDocument();
+        Set<Integer> skipList = new HashSet<>();
+        skipList.add(7);
+        skipList.add(8);
+        skipList.add(9);
+        skipList.add(10);
+        skipList.add(11);
+        for (int i=0; i < document.getNumberOfPages(); i++) {
+            if (skipList.contains(i)){
+                continue;
+            }
+            if (i >= startPage && i <= endPage) {
+                newDoc.addPage(document.getPage(i));
+            }
+        }
+        newDoc.save(newFile);
+        newDoc.close();
+        document.close();
+    }
 }

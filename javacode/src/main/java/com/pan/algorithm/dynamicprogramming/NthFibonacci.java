@@ -19,6 +19,12 @@ public class NthFibonacci {
     }
     // time complexity O(n)
     public int findNthFibonacciDynamic(int n) {
+        if (n == 0){
+            return 0;
+        }
+        if (n == 1){
+            return 1;
+        }
         int[] fibonacci = new int[n+1];
         fibonacci[0] = 0;
         fibonacci[1] = 1;

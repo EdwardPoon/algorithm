@@ -16,7 +16,7 @@ public class BinarySearch {
         arr[9] = 7;
         arr[10] = 9;
         arr[11] = 9;
-        System.out.println("index="+binarySearchTheFirst(arr, 7));
+        System.out.println("index="+binarySearch(arr, 7));
     }
 
     private static int binarySearch(int[] array, int value) {
@@ -24,7 +24,7 @@ public class BinarySearch {
         int high = array.length - 1;
 
         while (low <= high){
-            int mid = low + ((high - low) >> 1);
+            int mid = low + ((high - low) >> 1); // can't use (high + low)/2 as if high and low are big enough, the sum could be out of range
             System.out.println("high="+ high+",low="+ low+",mid=" + mid);
             if (array[mid] == value) {
                 return mid;
@@ -37,6 +37,7 @@ public class BinarySearch {
 
         return -1;
     }
+
     // when there are duplicate number in the array, find the first matching number
     private static int binarySearchTheFirst(int[] array, int value) {
 

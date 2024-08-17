@@ -43,6 +43,10 @@ public class TestExport {
             number = new Number(0, 2, 30);
             excelSheet.addCell(number);
 
+            // update cell
+            WritableCell writableCell = excelSheet.getWritableCell(0, 2);
+            ((Number) writableCell).setValue(50);
+
             label = new Label(1, 2, "Passed 2");
             excelSheet.addCell(label);
 
