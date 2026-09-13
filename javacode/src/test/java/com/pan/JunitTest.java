@@ -1,8 +1,10 @@
 package com.pan;
 
 import com.pan.algorithm.greedy.ResourceScheduler;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class JunitTest {
 

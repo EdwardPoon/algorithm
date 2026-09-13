@@ -1,10 +1,10 @@
 package com.pan.datastructure;
 
 public class CircularQueue {
-	  // 数组：items，数组大小：n
+
 	  private String[] items;
 	  private int n = 0;
-	  // head 表示队头下标，tail 表示队尾下标, enqueue will add item to tail, and dequeue will remove item from head and head++
+	  // head is the index of the head，tail is the index of the tail, enqueue will add item to tail, and dequeue will remove item from head and head++
 	  private int head = 0;
 	  private int tail = 0;
 
@@ -23,7 +23,6 @@ public class CircularQueue {
 	  }
 
 	  public String dequeue() {
-	    // 如果 head == tail 表示队列为空
 	    if (head == tail) return null;
 	    String ret = items[head];
 	    head = (head + 1) % n;

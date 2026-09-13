@@ -1,5 +1,6 @@
 package com.pan.datastructure;
 
+// minheap or maxheap
 public class Heap {
 
     // 1. heap is a complete binary tree

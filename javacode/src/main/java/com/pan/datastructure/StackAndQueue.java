@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.datastructure;
 
 import java.util.Queue;
 import java.util.Stack;

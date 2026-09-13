@@ -4,13 +4,12 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-
-//find the max number of member in the array  with the difference between each of two are less and equal than 1
+// find the max number of member in the array,
+// with the difference between each of two are less and equal than 1
 public class FindMaxNumber {
 
     static int pickingNumbers(int[] a) {
 
-        
         TreeMap<Integer,Integer> treeMap = new TreeMap<Integer,Integer>();
         for (int temp : a){
         	Integer count = treeMap.get(temp);
@@ -21,6 +20,7 @@ public class FindMaxNumber {
         	}
         	treeMap.put(temp, count);
         }
+
         int mostMax = 0;
         for(Entry<Integer,Integer> entry : treeMap.entrySet()){
         	System.out.println("currentKey:"+entry.getKey());

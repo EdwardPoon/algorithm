@@ -17,7 +17,6 @@ public class MergeSort extends Sort {
 
 	public static void mergeSort(Comparable[] a)
 	{
-		Comparable[] aux = new Comparable[a.length]; 
 		sort(a, 0, a.length - 1);
 	}
 	private static void sort(Comparable[] a, int lo, int hi)
@@ -26,7 +25,7 @@ public class MergeSort extends Sort {
 		int mid = lo + (hi - lo)/2;
 		sort(a, lo, mid); // Sort left half.
 		sort(a, mid+1, hi); // Sort right half.
-		merge(a, lo, mid, hi); // Merge results (code on page 271).
+		merge(a, lo, mid, hi); // Merge results
 	}
 	
 	private static void merge(Comparable[] a, int lo, int mid, int hi) {
