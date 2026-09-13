@@ -17,7 +17,7 @@ public class ZeroOneBagDP {
 
     public int result = 0;
 
-    // dynamic programming, O(n * m ), n is the length of the items, m is the weightLimit
+    // dynamic programming, O(n * m), n is the length of the items, m is the weightLimit
     public int knapsack(int[] weight, int weightLimit) {
         int n = weight.length;
         boolean[][] states = new boolean[n][weightLimit+1];// first index is the item index, second index is the weightSum
