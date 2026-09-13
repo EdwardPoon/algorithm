@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.backtracking;
 
 import java.util.HashMap;
 import java.util.LinkedList;
