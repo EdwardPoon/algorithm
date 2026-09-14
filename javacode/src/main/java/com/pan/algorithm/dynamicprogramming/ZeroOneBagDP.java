@@ -10,14 +10,19 @@ public class ZeroOneBagDP {
         int[] weight = {2,2,4,6,4}; // weight of the items
 
         ZeroOneBagDP zeroOneBagDP = new ZeroOneBagDP();
-        //zeroOneBag.calculateMaxWeight(weight, 0, 0, weightLimit);
-        //System.out.println("result=" + zeroOneBag.result);
         System.out.println("result=" + zeroOneBagDP.knapsack(weight, weightLimit) );
     }
 
     public int result = 0;
 
     // dynamic programming, O(n * m), n is the length of the items, m is the weightLimit
+    // use states[][] to store the maxWeight when store/not store the current item
+    // for {2,2,4,6,4} and weightLimit = 9
+    //               0,  1,  2,  3,  4,  5,  6... 8,  9  (weightLimit = 9)
+    // states[0][x]  1       1                             1 is true
+    // states[1][x]  1       1       1
+    // states[2][x]  1       1       1            1
+    // ........
     public int knapsack(int[] weight, int weightLimit) {
         int n = weight.length;
         boolean[][] states = new boolean[n][weightLimit+1];// first index is the item index, second index is the weightSum
@@ -27,14 +32,20 @@ public class ZeroOneBagDP {
         }
         for (int i = 1; i < n; ++i) {
             for (int j = 0; j <= weightLimit; ++j) {// not putting the i into the bag
-                if (states[i-1][j] == true) states[i][j] = states[i-1][j];
+                if (states[i-1][j]) {
+                    states[i][j] = true;
+                }
             }
             for (int j = 0; j <= weightLimit-weight[i]; ++j) {// put i into the bag
-                if (states[i-1][j]==true) states[i][j+weight[i]] = true;
+                if (states[i-1][j]) {
+                    states[i][j+weight[i]] = true;
+                }
             }
         }
         for (int i = weightLimit; i >= 0; --i) {
-            if (states[n-1][i] == true) return i;
+            if (states[n-1][i]) {
+                return i;
+            }
         }
         return 0;
     }

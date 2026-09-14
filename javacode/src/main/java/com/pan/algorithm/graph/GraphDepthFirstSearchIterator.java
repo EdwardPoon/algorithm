@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.graph;
 
 import java.util.HashSet;
 import java.util.Iterator;

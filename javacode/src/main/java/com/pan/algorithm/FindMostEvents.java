@@ -9,30 +9,22 @@ package com.pan.algorithm;
 public class FindMostEvents {
 
     public static void main(String[] args) {
-        maxEventsInWindow(new int[]{1, 2, 3});
-        System.out.println(" maxEventsInWindow: ");
+        int max = maxEventsInWindow(new int[]{1, 2, 3, 61, 62});
+        System.out.println(" maxEventsInWindow: " + max);
     }
 
-    public static void maxEventsInWindow(int[] timestamps) {
+    public static int maxEventsInWindow(int[] timestamps) {
         // timestamps is non-decreasing (seconds)
         // Return the max number of events in any contiguous 60-second window (inclusive).
-
-        try {
-            int maxNum = 0;
-            int start = 0;
-            for (int end = 0; end < timestamps.length; end++) {
-                if (start < end && timestamps[end] - timestamps[start] > 60) {
-                    start++;
-                    continue;
-                }
-                maxNum = Math.max(maxNum, end - start + 1);
+        int maxNum = 0;
+        int start = 0;
+        for (int end = 0; end < timestamps.length; end++) {
+            if (start < end && timestamps[end] - timestamps[start] > 60) {
+                start++;
+                continue;
             }
-            return;
-        } catch (Exception e) {
-
-        } finally {
-            System.out.println("maxEventsInWindow finally");
+            maxNum = Math.max(maxNum, end - start + 1);
         }
-
+        return maxNum;
     }
 }

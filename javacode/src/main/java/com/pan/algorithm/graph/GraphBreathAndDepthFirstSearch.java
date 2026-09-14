@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.graph;
 
 import java.util.LinkedList;
 import java.util.Queue;

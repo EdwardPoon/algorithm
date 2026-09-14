@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.graph;
 
 import java.util.Collections;
 import java.util.HashMap;
