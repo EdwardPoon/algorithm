@@ -14,8 +14,6 @@ package com.pan.algorithm;
 // Output: 4
 
 import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
 
 // 0 <= nums.length <= 10^5
 //-10^9 <= nums[i] <= 10^9
@@ -26,27 +24,48 @@ public class LongestConsecutiveSequence {
     public static void main(String[] args) {
         LongestConsecutiveSequence longestSeq = new LongestConsecutiveSequence();
         //int[] nums = {100,4,200,1,3,2};
-        int[] nums = {0,3,7,2,5,8,4,6,0,1};
-        System.out.println("longest:" + longestSeq.getLongestSeq(nums));
+        //int[] nums = {0,3,7,2,5,8,4,6,0,1};
+        int[] nums = {-1,1,0,1,2};
+        System.out.println("longest:" + longestSeq.longestConsecutive(nums));
     }
 
-    public int getLongestSeq(int[] nums) {
-
+    public int longestConsecutive(int[] nums) {
         int longest = 0;
-        int offset = 1000_000_000;
 
         BitSet ranges = new BitSet();
+        BitSet negativeRanges = new BitSet();
         for (int i : nums) {
-            ranges.set(i+offset, i+offset+1);
+            if (i >= 0) {
+                ranges.set(i);
+            }
+            else {
+                negativeRanges.set(-i);
+            }
         }
-        //System.out.println("ranges.length(): " + ranges.length());
         int last = 0;
+        boolean firstItem = true;
         while (last < ranges.length()) {
             int set = ranges.nextSetBit(last);
             if (set < 0) {
                 break; // No more set bits
             }
             int clear = ranges.nextClearBit(set);
+            longest = Math.max(longest, clear - set);
+
+            if (firstItem && set == 0 && negativeRanges.nextSetBit(0) == 1) {
+                longest += negativeRanges.nextClearBit(1) - 1;
+            }
+
+            last = clear;
+            firstItem = false;
+        }
+        last = 0;
+        while (last < negativeRanges.length()) {
+            int set = negativeRanges.nextSetBit(last);
+            if (set < 0) {
+                break; // No more set bits
+            }
+            int clear = negativeRanges.nextClearBit(set);
             longest = Math.max(longest, clear - set);
             last = clear;
         }
