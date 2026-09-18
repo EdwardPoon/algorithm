@@ -14,6 +14,8 @@ package com.pan.algorithm;
 // Output: 4
 
 import java.util.BitSet;
+import java.util.HashSet;
+import java.util.Set;
 
 // 0 <= nums.length <= 10^5
 //-10^9 <= nums[i] <= 10^9
@@ -26,7 +28,7 @@ public class LongestConsecutiveSequence {
         //int[] nums = {100,4,200,1,3,2};
         //int[] nums = {0,3,7,2,5,8,4,6,0,1};
         int[] nums = {-1,1,0,1,2};
-        System.out.println("longest:" + longestSeq.longestConsecutive(nums));
+        System.out.println("longest:" + longestSeq.longestConsecutive2(nums));
     }
 
     public int longestConsecutive(int[] nums) {
@@ -70,5 +72,36 @@ public class LongestConsecutiveSequence {
             last = clear;
         }
         return longest;
+    }
+
+    public int longestConsecutive2(int[] nums) {
+        int max = 0;
+
+        Set<Integer> set = new HashSet<>();
+        for (int i = 0; i < nums.length; i++) {
+            set.add(nums[i]);
+        }
+
+        for (int i = 0; i < nums.length; i++) {
+            int count = 1;
+
+            // look left
+            int num = nums[i];
+            while (set.contains(--num)) {
+                count++;
+                set.remove(num);
+            }
+
+            // look right
+            num = nums[i];
+            while (set.contains(++num)) {
+                count++;
+                set.remove(num);
+            }
+
+            max = Math.max(max, count);
+        }
+
+        return max;
     }
 }
