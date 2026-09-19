@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.hashtable;
 
 
 // Input: nums = [100,4,200,1,3,2]
