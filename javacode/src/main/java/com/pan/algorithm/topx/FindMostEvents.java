@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.topx;
 
 // find most events within a given window
 // you are given an array of event timestamps sorted in ascending order by second

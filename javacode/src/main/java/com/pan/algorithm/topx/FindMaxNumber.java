@@ -1,4 +1,4 @@
-package com.pan.algorithm;
+package com.pan.algorithm.topx;
 
 import java.util.Map.Entry;
 import java.util.Scanner;
