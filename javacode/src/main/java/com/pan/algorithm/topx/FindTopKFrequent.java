@@ -7,9 +7,11 @@ public class FindTopKFrequent {
     public static void main(String[] args) {
         FindTopKFrequent findTopKFrequent = new FindTopKFrequent();
         //int[] items = {1,1,1,2,2,3};
-        int[] items = {5,2,5,3,5,3,1,1,3};
-        //int[] items = {3,2,3,1,2,4,5,5,6,7,7,8,2,3,1,1,1,10,11,5,6,2,4,7,8,5,6};
-        int[] res = findTopKFrequent.findTopKFrequentElements(items, 2);
+        //int[] items = {5,2,5,3,5,3,1,1,3};
+        int[] items = {-347,-990,830,-654,-336,-255,-378,-670,336,481,420,986,982,-543,-766,-839,870,-182,-386,970,-385,850,-416,-101,39,-787,423,-441,836,958,507,168,798,-854,139,125,547,370,984,-989,-584,-875,773,541,-374,-833,937,-773,-442,-21,-138,998,-811,-235,-796,-299,763,-208,213,129,543,320,619,-130,-742,498,-613,-306,429,698,-746,-511,-515,-658,214,-360,-830,-661,-879,-720,255,512,-539,-206,-531,54,-614,-925,437,84,-497,-681,-205,522,-511,-76,229,700,-450,12,-37,939,511,195,430,-392,-212,-682,-716,-150,-453,92,180,541,476,525,500,-817,-437,-962,792,476,-799,-318,-307,273,-343,503,-962,228,498,871,435,451,642,576,-832,231,505,159,841,-654,939,844,638,-860,-379,266,406,916,599,-159,321,4,570,-976,675,67,905,333,852,720,-147,-482,-508,-329,154,463,71,308,668,-387,-477,-835,-835,-966,431,-302,804,-481,227,80,-703,242,-103,362,870,102,45,-620,545,830,656,-561,-450,368,-244,998,-3,-602,-503,-453,372,816,-565,440,566,-492,188,758,657,789,228,16,441,-434,-749,357,96,-62,-742,961,576,-59,518,463,414,-928,693,-182,-887,518,3,162,-563,67,-988,878,2,415,13,900,930,-232,896,-71,-13,7,180,967,-467,570,930,-438,711,-357,-147,-909,320,-412,985,131,-161,300,354,406,490,-708,-77,-522,259,-174,-440,-571,836,-153,467,578,-923,315,-127,939,-676,-511,-53,-61,726,-884,-802,512,396,-555,93,-514,103,-135,-513,-396,-884,162,874,-154,-27,-321,-638,515,-224,-753,-87,-57,202,-250,483,475,966,999,792,-38,12,642,-624,-269,-470,672,419,-425,418,179,-907,-7,182,234,-811,-724,-493,362,-489,467,-535,127,-200,-655,-138,48,551,-843,-272,-847,-241,-479,991,-519,-244,-864,867,953,87,62,-906,429,352,459,994,359,530,835,-710,432,973,310,266,-182,-388,-477,141,-881,-523,-325,402,984,950,947,931,957,-633,121,-520,-90,996,-756,-650,337,-749,-278,-981,53,-427,-38,-189,-529,50,68,597,-858,344,-932,856,42,489,703,201,969,-36,-355,439,717,793,624,-962,120,-327,-562,955,-882,106,943,906,512,-19,581,-163,-648,-43,-867,160,512,355,-259,-734,554,653,-182,-918,-837,-216,-54,909,-231,672,-483,857,194,545,-291,-478,-120,255,-579,-513,753,-348,-45,694,-183,557,850,152,-64,-664,907,958,773,-649,-269,-168,348,-525,-902,-489,-880,242,227,-578,62,572,176,-859,-423,-61,346,614,-676,509,-808,735,-590,635,-917,-64,-15,89,-738,-392,943,592,813,-146,203,-194,-116,439,-182,-188,383,673,359,-146,-796,-441,-582,-766,-698,172,501,694,-175,-727,-130,-237,-721,-784,-701,185,-828,-275,-230,-628,14,-460,-216,-776,-66,-125,350,-101,-26,-590,-486,891,-468,-779,-936,-236,623,807,521,-694,478,873,836,780,-233,73,113,-254,496,-546,-332,-451,703,305,-553,200,-106,-313,965,-433,189,-840,-474,814,509,-17,-79,-803,71,779,-375,-92,-481,-176,161,796,437,-30,189,801,-873,-353,995,393,-219,47,153,-916,476,530,-697,-932,889,168,625,-909,755,-746,819,-369,352,-97,183,79,-397,342,-855,-596,-81,890,595,-234,523,655,-703,-381,-430,382,380,-500,680,568,57,544,573,-662,637,948,937,435,434,11,-675,-97,-854,-581,-800,301,-460,-765,-947,-398,775,839,678,-852,855,706,-195,-465,429,418,-40,-846,170,-998,-482,955,63,665,267,964,171,-833,587,793,156,-663,-633,482,-675,-596,555,-992,-869,-713,-830,66,959,-396,-797,-562,-17,62};
+
+        List<Integer> list = new ArrayList<>();
+        int[] res = findTopKFrequent.findTopKFrequentElements(items, 143);
         for (int i : res) {
             System.out.println(i);
         }
@@ -17,7 +19,7 @@ public class FindTopKFrequent {
 
     public int[] findTopKFrequentElements(int[] nums, int k) {
         Map<Integer, ItemCount> itemCountMap = new HashMap<>();
-        PriorityQueue<ItemCount> topItemQueue = new PriorityQueue<>((t1, t2) -> Integer.compare(t1.getCount(), t2.getCount())); // count to item map
+        PriorityQueue<ItemCount> topItemQueue = new PriorityQueue<>(k, (t1, t2) -> Integer.compare(t1.getCount(), t2.getCount())); // count to item map
         Set<Integer> topItems = new HashSet<>();
 
         for (int i=0; i < nums.length; i++) {
@@ -26,28 +28,34 @@ public class FindTopKFrequent {
             ItemCount currentItemCount = itemCountMap.get(current);
             if (currentItemCount == null) {
                 currentItemCount = new ItemCount(current);
-
+                itemCountMap.put(current, currentItemCount);
             } else{
                 currentItemCount.incCount();
             }
-            itemCountMap.put(current, currentItemCount);
+
             if (!topItems.contains(current)) {
                 if (topItems.size() < k) {
                     topItems.add(current);
                     topItemQueue.add(currentItemCount);
                 } else {
                     ItemCount topItemCount = topItemQueue.peek();
-                    System.out.println("Current: " + current +", topItemCount: " + topItemCount.getItem() + ",count:" + topItemCount.getCount());
-                    if (currentItemCount.getCount() > topItemCount.getCount()){
+                    if (currentItemCount.getItem() == topItemCount.getItem()) {
+                        topItemQueue.add(topItemQueue.poll());
+                    } else if (currentItemCount.getCount() > topItemCount.getCount()){
                         topItems.remove(topItemCount.getItem());
                         topItemQueue.poll();
 
                         topItems.add(current);
                         topItemQueue.add(currentItemCount);
+
+                        System.out.println("Replace Top with Current: " + current + ", count:" + currentItemCount.getCount() + ", topItemCount: " + topItemCount.getItem() + ",count:" + topItemCount.getCount());
                     }
                 }
+            } else {
+                ItemCount topItemCount = topItemQueue.poll();
+                topItemQueue.add(topItemCount);
             }
-            System.out.println("after process: " + current +", topItems: " + topItems);
+            //System.out.println("after process: " + current +", topItems: " + topItems);
         }
         return topItemQueue.stream().mapToInt(ItemCount::getItem).toArray();
     }
@@ -60,7 +68,7 @@ public class FindTopKFrequent {
             this.count = 1;
         }
         public void incCount() {
-            count += 1;
+            count++;
         }
         public int getItem() {
             return this.item;
