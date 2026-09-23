@@ -20,7 +20,6 @@ public class FindTopKFrequent {
     public int[] findTopKFrequentElements(int[] nums, int k) {
         Map<Integer, ItemCount> itemCountMap = new HashMap<>();
         PriorityQueue<ItemCount> topItemQueue = new PriorityQueue<>(k, (t1, t2) -> Integer.compare(t1.getCount(), t2.getCount())); // count to item map
-        Set<Integer> topItems = new HashSet<>();
 
         for (int i=0; i < nums.length; i++) {
             int current = nums[i];
@@ -29,33 +28,22 @@ public class FindTopKFrequent {
             if (currentItemCount == null) {
                 currentItemCount = new ItemCount(current);
                 itemCountMap.put(current, currentItemCount);
-            } else{
+            } else {
                 currentItemCount.incCount();
             }
-
-            if (!topItems.contains(current)) {
-                if (topItems.size() < k) {
-                    topItems.add(current);
-                    topItemQueue.add(currentItemCount);
-                } else {
-                    ItemCount topItemCount = topItemQueue.peek();
-                    if (currentItemCount.getItem() == topItemCount.getItem()) {
-                        topItemQueue.add(topItemQueue.poll());
-                    } else if (currentItemCount.getCount() > topItemCount.getCount()){
-                        topItems.remove(topItemCount.getItem());
-                        topItemQueue.poll();
-
-                        topItems.add(current);
-                        topItemQueue.add(currentItemCount);
-
-                        System.out.println("Replace Top with Current: " + current + ", count:" + currentItemCount.getCount() + ", topItemCount: " + topItemCount.getItem() + ",count:" + topItemCount.getCount());
-                    }
-                }
+        }
+        for (Map.Entry<Integer, ItemCount> entry : itemCountMap.entrySet()) {
+            ItemCount currentItem = entry.getValue();
+            if (topItemQueue.size() < k ){
+                topItemQueue.add(currentItem);
             } else {
-                ItemCount topItemCount = topItemQueue.poll();
-                topItemQueue.add(topItemCount);
+                ItemCount topItemCount = topItemQueue.peek();
+                if (topItemCount.getCount() < currentItem.getCount()) {
+                    topItemQueue.poll();
+                    topItemQueue.add(currentItem);
+                    System.out.println("Replace Top with Current: " + currentItem.getItem() + ", count:" + currentItem.getCount() + ", topItemCount: " + topItemCount.getItem() + ",count:" + topItemCount.getCount());
+                }
             }
-            //System.out.println("after process: " + current +", topItems: " + topItems);
         }
         return topItemQueue.stream().mapToInt(ItemCount::getItem).toArray();
     }
