@@ -1,4 +1,4 @@
-package com.pan.algorithm.binarytree;
+package com.pan.algorithm.binarysearch;
 
 import java.util.LinkedList;
 
