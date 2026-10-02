@@ -19,8 +19,11 @@ public class MedianOfTwoSortedArrayTest {
                 //arguments(new int[]{1,3,4,5,6}, new int[]{2,9,10,11}, 5.0),
                 arguments(new int[]{1,3,4}, new int[]{9,10,11}, 6.5), // all items in longer array is smaller
                 arguments(new int[]{1,3,4,5}, new int[]{9,10,11}, 5),
-                arguments(new int[]{7,9,10}, new int[]{1,2,3}, 5), // all items in longer array is larger
-                arguments(new int[]{7,9,10,11}, new int[]{1,2,3}, 7)
+                arguments(new int[]{1,2,3}, new int[]{7,9,10,11}, 7),
+                arguments(new int[]{1,2,3}, new int[]{1,2,3,4,5,6,7,8,9,10,11}, 7),
+                arguments(new int[]{2,3}, new int[]{1,2,3,4,5,6,7,8,9,10,11}, 7),
+                arguments(new int[]{3}, new int[]{1,2,3,4,5,6,7,8,9,10,11}, 7),
+                arguments(new int[]{1,2,3, 9,10,11}, new int[]{1,2,3,4,5,6,7,8,9,10,11}, 7)
         );
     }
 

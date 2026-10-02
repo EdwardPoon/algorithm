@@ -29,7 +29,7 @@ public class MedianOfTwoSortedArray {
         int lengthDiff = sizeOfLonger - sizeOfShorter;
         // odd number or even number
         boolean isOdd = (sizeOfLonger + sizeOfShorter) % 2 != 0;
-
+        // if all the items in one array is larger or smaller than another
         if (longer[sizeOfLonger-1] <= shorter[0]) {
             //4, 2 = 3
             //4, 3 = 4
@@ -58,7 +58,16 @@ public class MedianOfTwoSortedArray {
                 }
             }
         }
+        // binary search
+        int low = 0;
+        int high = sizeOfLonger - 1;
 
+        while (low <= high) {
+            int mid = low + ((high - low) >> 1);
+            //int mid2 =
+
+
+        }
 
 
         return median;
