@@ -29,6 +29,9 @@ public class MedianOfTwoSortedArray {
         if (length1 > length2) {
             return findMedianSortedArrays(nums2, nums1);
         }
+        if (length1 + length2 == 0) {
+            return 0.0;
+        }
         int halfTotal = (length1 + length2 + 1) >> 1;
         int low = 0;
         int high = length1;
