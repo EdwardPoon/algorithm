@@ -4,7 +4,7 @@ public class MedianOfTwoSortedArray {
     // nums1 = [1,3,4,5,6], nums2 = [2,9,10,11]
     // merged = [1,2,3,4,5,6,9,10,11], median = 5
     // nums1 = [1,3,4], nums2 = [9,10,11]
-    // merged = [1,3,4,9,10,11], median = 3+9/2=6.5
+    // merged = [1,3,4, 9,10,11], median = 4+9/2=6.5
     // test cases are in MedianOfTwoSortedArrayTest
 
     public static void main(String[] args) {
@@ -23,79 +23,43 @@ public class MedianOfTwoSortedArray {
         System.out.println("mid=" +mid + " mid2=" +mid2);
     }
 
-
     public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-        double median = 0.0;
-        int[] longer; // array with longer size
-        int[] shorter; // array with smaller size
-        if (nums1.length >= nums2.length) {
-            longer = nums1;
-            shorter = nums2;
+        int length1 = nums1.length;
+        int length2 = nums2.length;
+        if (length1 > length2) {
+            return findMedianSortedArrays(nums2, nums1);
         }
-        else {
-            shorter = nums1;
-            longer =  nums2;
-        }
-        int longLength = longer.length;
-        int shortLength = shorter.length;
-        int lengthDiff = longLength - shortLength;
-        // odd number or even number
-        boolean isOdd = (longLength + shortLength) % 2 != 0;
-        // if all the items in one array is larger or smaller than another
-        if (longer[longLength-1] <= shorter[0]) {
-            //4, 2 = 3
-            //4, 3 = 4
-            int midPointIndex = longLength - (lengthDiff/2);
-            midPointIndex--;
-            if (isOdd) {
-                return longer[midPointIndex];
-            }
-            else {
-                if (midPointIndex + 1 >= longLength ) {
-                    return (double) (longer[midPointIndex] + shorter[0]) /2;
-                } else {
-                    return (double) (longer[midPointIndex] + longer[midPointIndex + 1]) /2;
-                }
-            }
-        } else if (shorter[shortLength-1] <= longer[0]) {
-            int midPointIndex = lengthDiff/2;
-            if (isOdd) {
-                return longer[midPointIndex];
-            }
-            else {
-                if (midPointIndex - 1 <= 0 ) {
-                    return (double) (longer[midPointIndex] + shorter[shortLength-1]) /2;
-                } else {
-                    return (double) (longer[midPointIndex-1] + longer[midPointIndex]) /2;
-                }
-            }
-        }
-        // binary search
+        int halfTotal = (length1 + length2 + 1) >> 1;
         int low = 0;
-        int high = longLength - 1;
+        int high = length1;
+        boolean isEven = (length1 + length2) % 2 == 0;
         while (low <= high) {
-            int mid = low + ((high - low) >> 1);  // split longer array
-            int mid2 = ((longLength + shortLength) >> 1) - mid; // based on the index of,
-            if (mid2 < 0) {
-                mid2 = 0;
-            } else if (mid2 >= shortLength) {
-                mid2 = shortLength - 1;
-            }
-            if (mid2 < shortLength && mid2 >= 0) {
-                // check
-                //longer[mid-1] <
-            }
+            int mid1 = (low + high) >> 1;
+            int mid2 = halfTotal - mid1;
 
-            if (longer[mid] < shorter[mid2 -1]){
-                low = mid + 1;
-            } else if (longer[mid-1] > shorter[mid2]){
-                high = mid - 1;
-            } else{
-                break;
+            // border case
+            int leftMax1 = mid1 == 0 ? Integer.MIN_VALUE : nums1[mid1 - 1];
+            int rightMin1 = mid1 == length1 ? Integer.MAX_VALUE : nums1[mid1];
+
+            int leftMax2 = mid2 == 0 ? Integer.MIN_VALUE : nums2[mid2 - 1];
+            int rightMin2 = mid2 == length2 ? Integer.MAX_VALUE : nums2[mid2];
+
+            System.out.println("low=" + low + ", high=" + high + ", mid1=" + mid1 + ", mid2=" + mid2
+                    + ", leftMax1=" + leftMax1 + ", rightMin1=" + rightMin1
+                    + ", leftMax2=" + leftMax2 + ", rightMin2=" + rightMin2);
+
+            if (leftMax1 <= rightMin2 && leftMax2 <= rightMin1) {
+                if (isEven) {
+                    return (double) (Math.max(leftMax1, leftMax2) + Math.min(rightMin1, rightMin2)) / 2;
+                } else {
+                    return Math.max(leftMax1, leftMax2);
+                }
+            } else if (leftMax1 > rightMin2) {
+                high = mid1 - 1;
+            } else {
+                low = mid1 + 1;
             }
-
-
         }
-        return median;
+        throw new IllegalArgumentException("No median value");
     }
 }
